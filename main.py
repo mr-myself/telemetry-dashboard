@@ -4,8 +4,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 from components import charts, metrics, traces, logs
 from utils.data_processor import fetch_telemetry_data
-import time #Import time module for sleep function
-
+import time
 
 # Page configuration
 st.set_page_config(
@@ -34,32 +33,37 @@ refresh_rate = st.sidebar.selectbox(
 # Fetch real telemetry data
 data = fetch_telemetry_data()
 
-# Layout
-col1, col2 = st.columns(2)
+if data:
+    # Layout
+    col1, col2 = st.columns(2)
 
-with col1:
-    metrics.display_key_metrics(data['metrics'])
+    with col1:
+        metrics.display_key_metrics(data['metrics'])
 
-with col2:
-    charts.display_error_rate_chart(data['errors'])
+    with col2:
+        charts.display_error_rate_chart(data['errors'])
 
-# Traces section
-st.header("Trace Analysis")
-traces.display_trace_timeline(data['traces'])
+    # Traces section
+    st.header("Trace Analysis")
+    traces.display_trace_timeline(data['traces'])
 
-# Logs section
-st.header("System Logs")
-logs.display_log_viewer(data['logs'])
+    # Logs section
+    st.header("System Logs")
+    if isinstance(data['logs'], pd.DataFrame) and not data['logs'].empty:
+        logs.display_log_viewer(data['logs'])
+    else:
+        st.info("No logs available at the moment.")
 
-# Auto-refresh based on selected rate
-refresh_seconds = {
-    "5 seconds": 5,
-    "30 seconds": 30,
-    "1 minute": 60,
-    "5 minutes": 300
-}[refresh_rate]
+    # Auto-refresh based on selected rate
+    refresh_seconds = {
+        "5 seconds": 5,
+        "30 seconds": 30,
+        "1 minute": 60,
+        "5 minutes": 300
+    }[refresh_rate]
 
-# Add auto-refresh using Streamlit's automatic rerun
-st.empty()
-time.sleep(refresh_seconds)
-st.experimental_rerun()
+    # Add auto-refresh using Streamlit's rerun
+    time.sleep(refresh_seconds)
+    st.rerun()
+else:
+    st.error("Failed to fetch telemetry data. Please check the collector service.")

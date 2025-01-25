@@ -16,6 +16,15 @@ def fetch_telemetry_data():
 
             # Convert data to appropriate formats
             metrics_data = data.get('metrics', {})
+            if not metrics_data:
+                metrics_data = {
+                    'avg_response_time': 0.0,
+                    'response_time_change': 0.0,
+                    'requests_per_second': 0.0,
+                    'rps_change': 0.0,
+                    'error_rate': 0.0,
+                    'error_rate_change': 0.0
+                }
 
             error_data = pd.DataFrame(data.get('errors', []))
             if not error_data.empty:
@@ -29,65 +38,30 @@ def fetch_telemetry_data():
             log_data = pd.DataFrame(data.get('logs', []))
             if not log_data.empty:
                 log_data['timestamp'] = pd.to_datetime(log_data['timestamp'])
+                log_data = log_data.sort_values('timestamp', ascending=False)
 
-            return process_telemetry_data(
-                metrics_data=metrics_data,
-                error_data=error_data,
-                trace_data=trace_data,
-                log_data=log_data
-            )
+            return {
+                'metrics': metrics_data,
+                'errors': error_data if not error_data.empty else pd.DataFrame({'timestamp': [], 'error_rate': []}),
+                'traces': trace_data if not trace_data.empty else pd.DataFrame({'Task': [], 'Start': [], 'Finish': [], 'Resource': []}),
+                'logs': log_data if not log_data.empty else pd.DataFrame({'timestamp': [], 'level': [], 'service': [], 'message': []})
+            }
+
+        return None
     except requests.exceptions.RequestException:
-        # Return sample data if collector is not available
-        return process_telemetry_data()
+        return None
 
 def process_telemetry_data(metrics_data=None, error_data=None, trace_data=None, log_data=None):
     """
     Process telemetry data for the dashboard.
+    This function is kept for backwards compatibility but should not be used directly.
+    Use fetch_telemetry_data() instead.
     """
-    now = datetime.now()
-
-    # Process metrics data
-    if metrics_data is None or not metrics_data:
-        metrics_data = {
-            'avg_response_time': 250.5,
-            'response_time_change': -12.3,
-            'requests_per_second': 458.2,
-            'rps_change': 23.5,
-            'error_rate': 1.2,
-            'error_rate_change': -0.3
-        }
-
-    # Process error data
-    if error_data is None or error_data.empty:
-        timestamps = pd.date_range(end=now, periods=100, freq='1min')
-        error_data = pd.DataFrame({
-            'timestamp': timestamps,
-            'error_rate': np.random.normal(1.5, 0.5, len(timestamps))
-        })
-
-    # Process trace data
-    if trace_data is None or trace_data.empty:
-        trace_data = pd.DataFrame([
-            dict(Task='API Request', Start='2023-01-01 12:00:00', Finish='2023-01-01 12:00:02', Resource='Gateway'),
-            dict(Task='Database Query', Start='2023-01-01 12:00:02', Finish='2023-01-01 12:00:04', Resource='Database'),
-            dict(Task='Cache Operation', Start='2023-01-01 12:00:04', Finish='2023-01-01 12:00:05', Resource='Cache')
-        ])
-
-    # Process logs data
-    if log_data is None or log_data.empty:
-        timestamps = pd.date_range(end=now, periods=100, freq='1min')
-        log_data = pd.DataFrame({
-            'timestamp': timestamps,
-            'level': np.random.choice(['INFO', 'WARNING', 'ERROR'], size=len(timestamps)),
-            'service': np.random.choice(['api', 'database', 'cache'], size=len(timestamps)),
-            'message': [f'Sample log message {i}' for i in range(len(timestamps))]
-        })
-
-    return {
-        'metrics': metrics_data,
-        'errors': error_data,
-        'traces': trace_data,
-        'logs': log_data
+    return fetch_telemetry_data() or {
+        'metrics': metrics_data or {},
+        'errors': error_data if error_data is not None else pd.DataFrame(),
+        'traces': trace_data if trace_data is not None else pd.DataFrame(),
+        'logs': log_data if log_data is not None else pd.DataFrame()
     }
 
 # Keep the generate_sample_data function for demonstration
