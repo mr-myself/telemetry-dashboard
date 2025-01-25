@@ -1,13 +1,19 @@
 import streamlit as st
 import plotly.figure_factory as ff
 import pandas as pd
+from datetime import datetime
 
 def display_trace_timeline(trace_data):
     """Display trace timeline visualization"""
     st.subheader("Request Traces")
 
-    # Create color mapping based on unique tasks
-    unique_tasks = trace_data['Task'].unique()
+    # Convert Start and Finish to datetime and calculate duration
+    trace_data = trace_data.copy()
+    trace_data['Start'] = pd.to_datetime(trace_data['Start'])
+    trace_data['Finish'] = pd.to_datetime(trace_data['Finish'])
+    trace_data['Duration'] = (trace_data['Finish'] - trace_data['Start']).dt.total_seconds()
+
+    # Create color mapping for unique tasks
     colors = {'API Request': '#FF4B4B', 'Database Query': '#1F77B4', 'Cache Operation': '#2CA02C'}
 
     # Create Gantt chart for traces
@@ -29,9 +35,11 @@ def display_trace_timeline(trace_data):
 
     st.plotly_chart(fig, use_container_width=True)
 
-    # Trace details
+    # Trace details with formatted duration
     with st.expander("Trace Details"):
+        display_df = trace_data.copy()
+        display_df['Duration'] = display_df['Duration'].apply(lambda x: f"{x:.2f}s")
         st.dataframe(
-            trace_data[['Task', 'Start', 'Finish', 'Resource', 'Duration']],
+            display_df[['Task', 'Start', 'Finish', 'Resource', 'Duration']],
             use_container_width=True
         )
