@@ -1,41 +1,53 @@
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
+import requests
+
+COLLECTOR_URL = "http://localhost:8000"
+
+def fetch_telemetry_data():
+    """
+    Fetch telemetry data from the collector service
+    """
+    try:
+        response = requests.get(f"{COLLECTOR_URL}/telemetry/all")
+        if response.status_code == 200:
+            data = response.json()
+
+            # Convert data to appropriate formats
+            metrics_data = data.get('metrics', {})
+
+            error_data = pd.DataFrame(data.get('errors', []))
+            if not error_data.empty:
+                error_data['timestamp'] = pd.to_datetime(error_data['timestamp'])
+
+            trace_data = pd.DataFrame(data.get('traces', []))
+            if not trace_data.empty:
+                trace_data['Start'] = pd.to_datetime(trace_data['Start'])
+                trace_data['Finish'] = pd.to_datetime(trace_data['Finish'])
+
+            log_data = pd.DataFrame(data.get('logs', []))
+            if not log_data.empty:
+                log_data['timestamp'] = pd.to_datetime(log_data['timestamp'])
+
+            return process_telemetry_data(
+                metrics_data=metrics_data,
+                error_data=error_data,
+                trace_data=trace_data,
+                log_data=log_data
+            )
+    except requests.exceptions.RequestException:
+        # Return sample data if collector is not available
+        return process_telemetry_data()
 
 def process_telemetry_data(metrics_data=None, error_data=None, trace_data=None, log_data=None):
     """
-    Process external telemetry data for the dashboard.
-
-    Parameters:
-    -----------
-    metrics_data : dict
-        Dictionary containing current metrics:
-        {
-            'avg_response_time': float,
-            'response_time_change': float,
-            'requests_per_second': float,
-            'rps_change': float,
-            'error_rate': float,
-            'error_rate_change': float
-        }
-
-    error_data : pandas.DataFrame
-        DataFrame with columns: ['timestamp', 'error_rate']
-
-    trace_data : pandas.DataFrame
-        DataFrame with columns: ['Task', 'Start', 'Finish', 'Resource']
-
-    log_data : pandas.DataFrame
-        DataFrame with columns: ['timestamp', 'level', 'service', 'message']
-
-    Returns:
-    --------
-    dict : Processed data ready for dashboard display
+    Process telemetry data for the dashboard.
     """
     now = datetime.now()
 
     # Process metrics data
-    if metrics_data is None:
+    if metrics_data is None or not metrics_data:
         metrics_data = {
             'avg_response_time': 250.5,
             'response_time_change': -12.3,
@@ -46,7 +58,7 @@ def process_telemetry_data(metrics_data=None, error_data=None, trace_data=None, 
         }
 
     # Process error data
-    if error_data is None:
+    if error_data is None or error_data.empty:
         timestamps = pd.date_range(end=now, periods=100, freq='1min')
         error_data = pd.DataFrame({
             'timestamp': timestamps,
@@ -54,7 +66,7 @@ def process_telemetry_data(metrics_data=None, error_data=None, trace_data=None, 
         })
 
     # Process trace data
-    if trace_data is None:
+    if trace_data is None or trace_data.empty:
         trace_data = pd.DataFrame([
             dict(Task='API Request', Start='2023-01-01 12:00:00', Finish='2023-01-01 12:00:02', Resource='Gateway'),
             dict(Task='Database Query', Start='2023-01-01 12:00:02', Finish='2023-01-01 12:00:04', Resource='Database'),
@@ -62,7 +74,7 @@ def process_telemetry_data(metrics_data=None, error_data=None, trace_data=None, 
         ])
 
     # Process logs data
-    if log_data is None:
+    if log_data is None or log_data.empty:
         timestamps = pd.date_range(end=now, periods=100, freq='1min')
         log_data = pd.DataFrame({
             'timestamp': timestamps,
