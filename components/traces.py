@@ -17,8 +17,13 @@ def display_trace_timeline(trace_data):
     trace_data['Finish'] = pd.to_datetime(trace_data['Finish'])
     trace_data['Duration'] = (trace_data['Finish'] - trace_data['Start']).dt.total_seconds()
 
-    # Create color mapping for unique tasks
-    colors = {'API Request': '#FF4B4B', 'Database Query': '#1F77B4', 'Cache Operation': '#2CA02C'}
+    # Generate colors dynamically based on unique tasks
+    unique_tasks = trace_data['Task'].unique()
+    colors = {}
+    color_palette = ['#FF4B4B', '#1F77B4', '#2CA02C', '#9467BD', '#E377C2', '#BCBD22']
+
+    for i, task in enumerate(unique_tasks):
+        colors[task] = color_palette[i % len(color_palette)]
 
     # Create Gantt chart for traces
     if len(trace_data) > 0:
