@@ -105,6 +105,6 @@ if __name__ == '__main__':
     print("Starting Todo App...")
     try:
         send_telemetry("INFO", "Todo App starting up")
-        app.run(host='0.0.0.0', port=3000, debug=True)
+        app.run(host='0.0.0.0', port=3000, debug=False)  
     except Exception as e:
         print(f"Failed to start Todo App: {e}")
