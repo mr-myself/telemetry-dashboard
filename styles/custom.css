@@ -1,0 +1,62 @@
+/* Custom styling for the dashboard */
+
+/* Main container */
+.main .block-container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+/* Headers */
+h1, h2, h3 {
+    color: #FF4B4B !important;
+    font-weight: 600 !important;
+}
+
+/* Metric cards */
+div[data-testid="stMetricValue"] {
+    font-size: 24px !important;
+    font-weight: 600 !important;
+}
+
+/* Sidebar */
+.css-1d391kg {
+    background-color: #262730;
+}
+
+/* Charts */
+.js-plotly-plot {
+    background-color: transparent !important;
+}
+
+/* Dataframes */
+.stDataFrame {
+    background-color: #1E1E1E;
+    border-radius: 5px;
+    padding: 1rem;
+}
+
+/* Buttons */
+.stButton > button {
+    background-color: #FF4B4B;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+}
+
+.stButton > button:hover {
+    background-color: #FF6B6B;
+}
+
+/* Select boxes */
+.stSelectbox > div > div {
+    background-color: #262730;
+    border: 1px solid #4A4A4A;
+}
+
+/* Search input */
+.stTextInput > div > div > input {
+    background-color: #262730;
+    border: 1px solid #4A4A4A;
+    color: white;
+}
