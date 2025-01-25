@@ -1,37 +1,41 @@
-# Telemetry Dashboard with Todo App Integration
+# 📊 Telemetry Dashboard with Todo App Integration
 
 A comprehensive telemetry visualization dashboard that enables real-time monitoring and analysis of system metrics and logs, integrated with a Todo application for demonstration purposes.
 
-## 📊 Telemetry Dashboard
+## 🎯 Overview
 
-A real-time monitoring solution that provides insights into system performance, error rates, and application behavior.
+This project combines a powerful telemetry dashboard with a sample Todo application to showcase real-world monitoring capabilities. The system consists of three main components:
 
-### Key Features
-- Real-time metrics visualization
-- Interactive performance charts
-- System log viewer with filtering capabilities
-- Request trace analysis
-- Customizable refresh rates
-- Dark mode interface
+1. **Telemetry Dashboard**: A Streamlit-based dashboard providing real-time insights into system performance
+2. **Collector Service**: A FastAPI service that collects and processes telemetry data
+3. **Todo Application**: A sample Flask application demonstrating real-world monitoring integration
 
-### Screenshots
-[Dashboard Screenshot Here]
-*Screenshot showing the telemetry dashboard with metrics, traces, and logs sections*
+## 📸 Screenshots
 
-## ✅ Todo Application
+### Telemetry Dashboard
+[Add screenshot showing the telemetry dashboard with metrics, traces, and logs sections]
+*Screenshot showing real-time metrics, performance charts, and system logs*
 
-A sample application integrated with the telemetry system to demonstrate real-world monitoring capabilities.
+### Todo Application
+[Add screenshot of the Todo application interface]
+*Screenshot showing the Todo app with form and list interface*
 
-### Key Features
+## 🚀 Key Features
+
+### Telemetry Dashboard
+- Real-time performance metrics visualization
+- Interactive charts using Plotly
+- System log viewer with advanced filtering
+- Request trace analysis with timeline view
+- Customizable refresh rates (5s to 5m)
+- Dark mode UI with responsive design
+
+### Todo Application
 - Create and manage todos
-- Real-time telemetry data collection
-- Performance monitoring
-- Error tracking
+- Real-time performance monitoring
+- Error tracking and logging
 - Request tracing
-
-### Screenshots
-[Todo App Screenshot Here]
-*Screenshot showing the Todo application interface*
+- RESTful API endpoints
 
 ## 🛠 Technical Stack
 
@@ -70,7 +74,7 @@ pip install -r requirements.txt
 ```bash
 python collector_service.py
 ```
-This will start the collector service on port 8000.
+The collector service will run on http://localhost:8000
 
 2. Start the Todo App:
 ```bash
@@ -78,27 +82,45 @@ python todo_app.py
 ```
 The Todo app will be available at http://localhost:3000
 
-3. Start the Dashboard:
+3. Launch the Dashboard:
 ```bash
 streamlit run main.py
 ```
 The dashboard will be accessible at http://localhost:5000
 
-## 🔍 Usage
+## 📖 Usage Guide
 
 ### Telemetry Dashboard
-- Select time range from the sidebar
-- Choose refresh rate for real-time updates
-- View system metrics in the top cards
-- Analyze error rates and performance in the charts
-- Explore request traces in the timeline view
-- Filter and search logs in the log viewer
 
-### Todo App
-- Access the Todo app interface
-- Add new todos using the form
-- View the list of todos
-- Monitor the application's performance in the dashboard
+1. **Time Range Selection**
+   - Use the sidebar to select your preferred time range
+   - Options: Last 15 Minutes, Last Hour, Last 24 Hours, Last 7 Days
+
+2. **Refresh Rate**
+   - Choose how often the dashboard updates
+   - Options: 5 seconds, 30 seconds, 1 minute, 5 minutes
+
+3. **Key Metrics**
+   - View essential performance indicators
+   - Monitor response times, request rates, and error rates
+
+4. **Trace Analysis**
+   - Analyze request traces with timeline visualization
+   - Track request durations and dependencies
+
+5. **Log Viewer**
+   - Filter logs by level and search terms
+   - Real-time log updates
+
+### Todo Application
+
+1. **Adding Todos**
+   - Enter todo text in the input field
+   - Click "Add Todo" or press Enter
+
+2. **Viewing Todos**
+   - See all todos in a clean list interface
+   - Monitor performance metrics in the dashboard
 
 ## 🤝 Contributing
 
